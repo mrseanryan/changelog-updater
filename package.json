@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "ts-node": "^8.4.1",
+    "typescript": "^3.7.2"
+  },
+  "scripts": {
+    "start": "yarn run ts-node src/main.ts",
+    "test": "yarn start ./test-data/CHANGELOG.add-and-change.md"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.6"
+  }
+}
