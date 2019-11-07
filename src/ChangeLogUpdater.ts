@@ -1,5 +1,8 @@
+import { Arguments } from "./Arguments";
+
 const fs = require("fs");
 const os = require("os");
+const readline = require("readline")
 
 export enum UpdateResult {
   Nothing,
@@ -17,15 +20,17 @@ enum CommentedTokens {
 }
 
 export class ChangeLogUpdater {
-  constructor(private readonly pathToChangeLog: string) {}
+  constructor(private readonly args: Arguments) {}
 
   private newLines: string[] = [];
   private hasChanges = false;
   private hasHitReleased = false;
 
   update(releaseDate: Date, version: string): Promise<UpdateResult> {
-    var lineReader = require("readline").createInterface({
-      input: require("fs").createReadStream(this.pathToChangeLog)
+    const header = fs.readFileSync(this.args.pathToHeader);
+
+    var lineReader = readline.createInterface({
+      input: fs.createReadStream(this.args.pathToChangeLog)
     });
 
     const releaseDateText = releaseDate.toDateString();
@@ -42,7 +47,7 @@ export class ChangeLogUpdater {
       });
 
       lineReader.on("close", () => {
-        self.saveNewLines();
+        self.saveNewLines(header);
 
         resolve(
           self.hasChanges ? UpdateResult.AddsAndChanges : UpdateResult.Nothing
@@ -51,10 +56,10 @@ export class ChangeLogUpdater {
     });
   }
 
-  private saveNewLines() {
-    const data = this.newLines.join(os.EOL);
+  private saveNewLines(header: string) {
+    const data = header + os.EOL + this.newLines.join(os.EOL);
 
-    fs.writeFileSync(this.pathToChangeLog, data);
+    fs.writeFileSync(this.args.pathToChangeLog, data);
   }
 
   private processLine(
