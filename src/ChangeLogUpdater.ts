@@ -1,3 +1,6 @@
+const fs = require("fs");
+const os = require("os");
+
 export enum UpdateResult {
   Nothing,
   AddOnly,
@@ -29,27 +32,29 @@ export class ChangeLogUpdater {
 
     const self = this;
 
-    return new Promise( (resolve, _reject ) => {
-    lineReader.on("line", (line: string) => {
-      const newLine = self.processLine(line, releaseDateText, version);
-      if (newLine !== line) {
-        self.hasChanges = true;
-      }
-      self.newLines.push(newLine);
-    });
+    return new Promise((resolve, _reject) => {
+      lineReader.on("line", (line: string) => {
+        const newLine = self.processLine(line, releaseDateText, version);
+        if (newLine !== line) {
+          self.hasChanges = true;
+        }
+        self.newLines.push(newLine);
+      });
 
-    lineReader.on("close", () => {
-      self.saveNewLines()
-     
-      resolve( self.hasChanges ? UpdateResult.AddsAndChanges : UpdateResult.Nothing);
-    });
+      lineReader.on("close", () => {
+        self.saveNewLines();
 
-  } );
-}
+        resolve(
+          self.hasChanges ? UpdateResult.AddsAndChanges : UpdateResult.Nothing
+        );
+      });
+    });
+  }
 
   private saveNewLines() {
-    // TODO xxx
-    this.newLines.forEach(l => console.log(l));  
+    const data = this.newLines.join(os.EOL);
+
+    fs.writeFileSync(this.pathToChangeLog, data);
   }
 
   private processLine(
