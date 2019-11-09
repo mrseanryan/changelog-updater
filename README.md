@@ -6,10 +6,6 @@ A simple command line tool to update a CHANGELOG.md file, after a package has be
 - sets the release date to today's date 
 - adds new empty Added or Changed sections, ready for the next release
 
-## Future features
-- set the release date to match the last changed date (in git) of package.json
-- collapse the Added or Changed section as appropriate
-
 ## Usage
 
 ```
