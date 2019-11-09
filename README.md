@@ -4,7 +4,7 @@ A simple command line tool to update a CHANGELOG.md file, after a package has be
 
 - sets the version to match the package.json
 - sets the release date to today's date 
-- adds new empty Added or Changed sections, ready for the next release
+- adds new empty Added and Changed sections, ready for the next release
 
 ## Usage
 
